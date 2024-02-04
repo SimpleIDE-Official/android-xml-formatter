@@ -1,8 +1,8 @@
 package com.bytehamster.androidxmlformatter.utils;
 
 import java.io.File;
-import java.nio.charset.StandardCharsets;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.FileUtils;
 
 public class FileUtil {

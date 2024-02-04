@@ -3,4 +3,4 @@ plugins {
 }
 
 rootProject.name = 'XML Formatter'
-include('code')
+include('app')
