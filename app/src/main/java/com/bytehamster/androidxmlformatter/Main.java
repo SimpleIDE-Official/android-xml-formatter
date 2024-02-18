@@ -45,7 +45,10 @@ public class Main {
     for (String arg : cmd.getArgList()) {
       if (arg.equals("-")) return 1;
 
-      addFilesFromDir(files, new File(arg));
+      File file = new File(arg);
+      if (file.exists()) {
+        addFilesFromDir(files, new File(arg));
+      }
     }
 
     if (files.isEmpty()) {
@@ -53,26 +56,27 @@ public class Main {
       return 1;
     }
 
+    int formatted = 0;
     for (File file : files) {
-      formatFile(file, cmd);
+      formatted += formatFile(file, cmd) ? 1 : 0;
     }
+    System.out.println(formatted + " files formated!");
 
     return 0;
   }
 
   private void addFilesFromDir(List<File> formatFiles, File file) {
-    if (file.isFile() && file.getName().endsWith(".xml")) {
-      formatFiles.add(file);
+    if (file.isFile()) {
+      if (file.getName().endsWith(".xml")) {
+        formatFiles.add(file);
+      }
       return;
     }
 
-    for (File f : file.listFiles()) {
-      if (f.isDirectory()) addFilesFromDir(formatFiles, f);
-      else if (f.getName().endsWith(".xml")) formatFiles.add(f);
-    }
+    for (File f : file.listFiles()) addFilesFromDir(formatFiles, f);
   }
 
-  private void formatFile(File file, CommandLine cmd) {
+  private boolean formatFile(File file, CommandLine cmd) {
     try {
       XMLOutputter outputter =new AndroidXmlOutputter(
         Integer.parseInt(cmd.getOptionValue(FormatterOptions.OPT_INDENTION, FormatterOptions.DEFAULT_INDENTION)),
@@ -85,8 +89,10 @@ public class Main {
 
       FileUtil.writeFile(file, outputter.outputString(new SAXBuilder().build(new FileInputStream(FileUtil.getFilePath(file)))).trim());
       System.out.println("Done formatting: " + FileUtil.getFilePath(file));
+      return true;
     } catch (Exception e) {
-      System.out.println("Error formatting file: " + file.getName() + ". Exception: " + e.getMessage());
+      System.out.println("Error formatting file: " + FileUtil.getFilePath(file) + ". Exception: " + e.getMessage());
+      return false;
     }
   }
 }
