@@ -29,14 +29,13 @@ public class Main {
     } catch (ParseException e) {
       System.out.println(e.getLocalizedMessage());
       System.out.println();
-
-      String jarPath = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toString()).getName();
-      new HelpFormatter().printHelp(jarPath + " [OPTIONS] <FILES>", options);
+      
+      printHelp(options);
       return 1;
     }
 
     if (cmd.getArgList().isEmpty()) {
-      System.out.println("Usage: [OPTIONS ex: --option] <FILES>");
+      printHelp(options);
       return 1;
     }
 
@@ -47,7 +46,7 @@ public class Main {
 
       File file = new File(arg);
       if (file.exists()) {
-        addFilesFromDir(files, new File(arg));
+        addFilesFromDir(files, file);
       }
     }
 
@@ -91,8 +90,12 @@ public class Main {
       System.out.println("Done formatting: " + FileUtil.getFilePath(file));
       return true;
     } catch (Exception e) {
-      System.out.println("Error formatting file: " + FileUtil.getFilePath(file) + ". Exception: " + e.getMessage());
+      System.out.println("Error formatting: " + FileUtil.getFilePath(file) + ". Exception: " + e.getMessage());
       return false;
     }
+  }
+
+  private void printHelp(Options options) {
+    new HelpFormatter().printHelp("[OPTIONS] <FILES>", options);
   }
 }
