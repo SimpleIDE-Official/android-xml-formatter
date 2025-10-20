@@ -1,6 +1,6 @@
 package com.bytehamster.androidxmlformatter;
 
-import com.bytehamster.androidxmlformatter.utils.FileUtil;
+import com.bytehamster.androidxmlformatter.utils.FileUtils;
 import com.bytehamster.androidxmlformatter.utils.FormatterOptions;
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,7 +40,6 @@ public class Main {
     }
 
     List<File> files = new ArrayList<>();
-
     for (String arg : cmd.getArgList()) {
       if (arg.equals("-")) return 1;
 
@@ -55,24 +54,28 @@ public class Main {
       return 1;
     }
 
-    int formatted = 0;
+    int formattedCount = 0;
     for (File file : files) {
-      formatted += formatFile(file, cmd) ? 1 : 0;
+      if (formatFile(file, cmd)) {
+        formattedCount += 1;
+      }
     }
-    System.out.println(formatted + " files formated!");
+    System.out.println(formattedCount + " files formated!");
 
     return 0;
   }
 
   private void addFilesFromDir(List<File> formatFiles, File file) {
-    if (file.isFile()) {
-      if (file.getName().endsWith(".xml")) {
-        formatFiles.add(file);
+    if (file.isDirectory()) {
+      for (File f : file.listFiles()) {
+        addFilesFromDir(formatFiles, f);
       }
       return;
     }
 
-    for (File f : file.listFiles()) addFilesFromDir(formatFiles, f);
+    if (file.getName().endsWith(".xml")) {
+      formatFiles.add(file);
+    }
   }
 
   private boolean formatFile(File file, CommandLine cmd) {
@@ -86,11 +89,12 @@ public class Main {
         cmd.hasOption(FormatterOptions.OPT_NAMESPACE_SORT)
       );
 
-      FileUtil.writeFile(file, outputter.outputString(new SAXBuilder().build(new FileInputStream(FileUtil.getFilePath(file)))).trim());
-      System.out.println("Done formatting: " + FileUtil.getFilePath(file));
+      String formatedText = outputter.outputString(new SAXBuilder().build(new FileInputStream(file))).trim();
+      FileUtils.writeFile(file, formatedText );
+      System.out.println("Done formatting: " + file);
       return true;
     } catch (Exception e) {
-      System.out.println("Error formatting: " + FileUtil.getFilePath(file) + ". Exception: " + e.getMessage());
+      System.out.println("Error formatting: " + file + ". Exception: " + e.getMessage());
       return false;
     }
   }

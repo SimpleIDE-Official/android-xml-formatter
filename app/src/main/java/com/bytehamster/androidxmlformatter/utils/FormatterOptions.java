@@ -12,8 +12,8 @@ public class FormatterOptions {
   public static final String OPT_NAMESPACE_SORT = "namespace-sort";
 
   public static final String DEFAULT_INDENTION = "2";
-  public static final String DEFAULT_ATTRIBUTE_ORDER = "id,layout_width,layout_height";
-  public static final String DEFAULT_NAMESPACE_ORDER = "android,app";
+  public static final String DEFAULT_ATTRIBUTE_ORDER = "id,style,layout_width,layout_height,layout_margin,layout_marginLeft,layout_marginStart,layout_marginTop,layout_marginRight,layout_marginEnd,layout_marginBottom";
+  public static final String DEFAULT_NAMESPACE_ORDER = "xmlns,android,app,tools";
 
   public static Options getOptions(String[] args) {
     Options options = new Options();
